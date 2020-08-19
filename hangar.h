@@ -3,6 +3,10 @@
 
 #ifdef HANGAR2_OPENGL_ES
     #define WARLOCK_OPENGL_ES
+#elif defined HANGAR2_OPENGL_DESKTOP
+    #error Hangar2 does not currently support desktop OpenGL!
+#else
+    #error Hangar2 you must choose an OpenGL context type!
 #endif // HANGAR2_OPENGL_ES
 
 #include <iostream>
