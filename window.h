@@ -215,7 +215,6 @@ namespace Hangar
             {
                 GJGO::wait(this->m_frametimeCap - this->m_frametimeTracker.elapsed());
             }
-            std::cout << this->m_frametimeTracker.elapsed() << std::endl;
             this->deltaTime = this->m_frametimeTracker.elapsed();
             this->m_frametimeTracker.reset();
         }
