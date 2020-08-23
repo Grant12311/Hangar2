@@ -22,7 +22,7 @@
 #include <GJGO/timer.h>
 #include <GJGO/wait.h>
 #include <Warlock/warlock.h>
-#include <Druid/guards.h>
+#include <Druid/druid.h>
 
 #include "keycodes.h"
 #include "keycode_converter.h"
