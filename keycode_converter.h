@@ -39,7 +39,7 @@ namespace Hangar
             {0, HGR_mouse_left}, {1, HGR_mouse_right}, {2, HGR_mouse_middle},
             {XK_Escape, HGR_escape}, {65407, HGR_numlock}, {HGR_printscreen, HGR_printscreen}, {XK_Delete, HGR_delete}, {XK_BackSpace, HGR_backspace}, {XK_Tab, HGR_tab},
             {XK_Caps_Lock, HGR_capslock}, {XK_Return, HGR_enter}, {XK_Shift_L, HGR_shift_left}, {XK_Shift_R, HGR_shift_right}, {XK_Control_L, HGR_control_left}, {XK_Control_R, HGR_control_right},
-            {HGR_function, HGR_function}, {XK_Super_L, HGR_super}, {XK_Super_R, HGR_super}, {XK_Alt_L, HGR_alt_left}, {XK_Alt_R, HGR_alt_right}, {XK_Up, HGR_up}, {XK_Up, HGR_down},
+            {HGR_function, HGR_function}, {XK_Super_L, HGR_super}, {XK_Super_R, HGR_super}, {XK_Alt_L, HGR_alt_left}, {XK_Alt_R, HGR_alt_right}, {XK_Up, HGR_up}, {XK_Down, HGR_down},
             {XK_Left, HGR_left}, {XK_Right, HGR_right}, {XK_F1, HGR_f1}, {XK_F2, HGR_f2}, {XK_F3, HGR_f3}, {XK_F4, HGR_f4}, {XK_F5, HGR_f5}, {XK_F6, HGR_f6}, {XK_F7, HGR_f7},
             {XK_F8, HGR_f8}, {XK_F9, HGR_f9}, {XK_F10, HGR_f10}, {XK_F11, HGR_f11}, {XK_F12, HGR_f12}, {XK_1, HGR_1}, {XK_2, HGR_2}, {XK_3, HGR_3}, {XK_4, HGR_4},
             {XK_5, HGR_5}, {XK_6, HGR_6}, {XK_7, HGR_7}, {XK_8, HGR_8}, {XK_9, HGR_9}, {XK_0, HGR_0}, {XK_q, HGR_q}, {XK_w, HGR_w}, {XK_e, HGR_e}, {XK_r, HGR_r}, {XK_t, HGR_t},
