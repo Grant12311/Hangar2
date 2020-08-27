@@ -72,7 +72,8 @@ namespace Hangar
         void setMousePosition(const int a_posX, const int a_posY)
         {
             #ifdef __linux__
-                XWarpPointer(this->xDisplay, None, this->xWindow, 0, 0, 0, 0, a_posX, XHeightOfScreen(this->xScreen) - a_posY);
+                XWarpPointer(this->xDisplay, this->xRoot, this->xRoot, 0, 0, 0, 0, a_posX, XHeightOfScreen(this->xScreen) - a_posY);
+                this->fetchMouse();
             #endif
         }
 
@@ -119,7 +120,10 @@ namespace Hangar
                 switch (this->xe.type)
                 {
                     case ConfigureNotify:
-                        XGetGeometry(this->xDisplay, this->xWindow, &this->xRoot, &this->position[0], &this->position[1], &this->width, &this->height, &this->borderWidth, &this->depth);
+                        this->width = xe.xconfigure.width;
+                        this->height = xe.xconfigure.height;
+                        this->position[0] = xe.xconfigure.x;
+                        this->position[1] = XHeightOfScreen(this->xScreen) - xe.xconfigure.y - this->height;
                         if (this->resizeViewportToMatchWindowSize)
                         {
                             glCall(glViewport(0, 0, this->width, this->height));
@@ -182,29 +186,7 @@ namespace Hangar
             }
 
             // Update Mouse
-            this->mouseHasWarped = false;
             this->fetchMouse();
-            if (this->mouseIsEndless)
-            {
-                if (this->mousePositionAbsolute[0] >= static_cast<int>(this->width - 1))
-                {
-                    this->setMousePosition(0, this->mousePositionAbsolute[1]);
-                    this->mouseHasWarped = true;
-                }else if (this->mousePositionAbsolute[0] <= 1){
-                    this->setMousePosition(this->width, this->mousePositionAbsolute[1]);
-                    this->mouseHasWarped = true;
-                }
-
-                if (this->mousePositionAbsolute[1] >= static_cast<int>(this->height - 1))
-                {
-                    this->setMousePosition(this->mousePositionAbsolute[0], 0);
-                    this->mouseHasWarped = true;
-                }else if (this->mousePositionAbsolute[1] <= 1){
-                    this->setMousePosition(this->mousePositionAbsolute[0], this->height);
-                    this->mouseHasWarped = true;
-                }
-                this->fetchMouse();
-            }
             #endif // __linux__
         }
 
