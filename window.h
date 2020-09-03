@@ -54,6 +54,14 @@ namespace Hangar
 
         Warlock::Context* openglContext;
 
+        Beacon::Event<const int, const int> onMoveEvent;
+        Beacon::Event<const unsigned int, const unsigned int> onResizeEvent;
+        Beacon::Event<const int> onKeyUpEvent;
+        Beacon::Event<const int> onKeyDownEvent;
+        Beacon::Event<const unsigned char> onMouseButtonDownEvent;
+        Beacon::Event<const unsigned char> onMouseButtonUpEvent;
+        Beacon::Event<const bool> onMouseWheelScrollEvent;
+
         void setVsync(const bool a_vsync)
         {
             this->vsync = a_vsync;
@@ -120,13 +128,22 @@ namespace Hangar
                 switch (this->xe.type)
                 {
                     case ConfigureNotify:
-                        this->width = xe.xconfigure.width;
-                        this->height = xe.xconfigure.height;
-                        this->position[0] = xe.xconfigure.x;
-                        this->position[1] = XHeightOfScreen(this->xScreen) - xe.xconfigure.y - this->height;
-                        if (this->resizeViewportToMatchWindowSize)
+                        if (this->width != xe.xconfigure.width || this->height != xe.xconfigure.height)
                         {
-                            glCall(glViewport(0, 0, this->width, this->height));
+                            this->width = xe.xconfigure.width;
+                            this->height = xe.xconfigure.height;
+                            this->onResizeEvent.call(this->width, this->height);
+
+                            if (this->resizeViewportToMatchWindowSize)
+                            {
+                                glCall(glViewport(0, 0, this->width, this->height));
+                            }
+                        }
+                        if (this->position[0] != xe.xconfigure.x || this->position[1] != xe.xconfigure.y)
+                        {
+                            this->position[0] = xe.xconfigure.x;
+                            this->position[1] = XHeightOfScreen(this->xScreen) - xe.xconfigure.y - this->height;
+                            this->onMoveEvent.call(this->position[0], this->position[1]);
                         }
                         break;
                     case ClientMessage:
@@ -139,13 +156,18 @@ namespace Hangar
                             this->isOpen = false;
                         int convertedKeycode = convertKeycode[XLookupKeysym(&this->xe.xkey, 0)];
                         if (!this->keyIsDown(convertedKeycode))
+                        {
                             this->keysDown.push_back(convertedKeycode);
+                            this->onKeyDownEvent.call(convertedKeycode);
+                        }
                     }
                         break;
                     case KeyRelease:
                     {
-                        auto itr = std::remove(this->keysDown.begin(), this->keysDown.end(), convertKeycode[XLookupKeysym(&this->xe.xkey, 0)]);
+                        const int convertedKeycode = convertKeycode[XLookupKeysym(&this->xe.xkey, 0)];
+                        auto itr = std::remove(this->keysDown.begin(), this->keysDown.end(), convertedKeycode);
                         this->keysDown.erase(itr, this->keysDown.end());
+                        this->onKeyUpEvent.call(convertedKeycode);
                     }
                         break;
                     case ButtonPress:
@@ -153,18 +175,23 @@ namespace Hangar
                         {
                             case 1: // left click
                                 mouseButtonsDown[0] = true;
+                                this->onMouseButtonDownEvent.call(0);
                                 break;
                             case 2: // middle click
                                 mouseButtonsDown[1] = true;
+                                this->onMouseButtonDownEvent.call(1);
                                 break;
                             case 3: // right click
                                 mouseButtonsDown[2] = true;
+                                this->onMouseButtonDownEvent.call(2);
                                 break;
                             case 4: // mouse wheel up
                                 this->mouseWheelEvents.push_back(true);
+                                this->onMouseWheelScrollEvent.call(true);
                                 break;
                             case 5: // mouse wheel down
                                 this->mouseWheelEvents.push_back(false);
+                                this->onMouseWheelScrollEvent.call(false);
                                 break;
                         }
                         break;
@@ -173,12 +200,15 @@ namespace Hangar
                         {
                             case 1: // right click
                                 mouseButtonsDown[0] = false;
+                                this->onMouseButtonUpEvent.call(0);
                                 break;
                             case 2: // middle click
                                 mouseButtonsDown[1] = false;
+                                this->onMouseButtonUpEvent.call(1);
                                 break;
                             case 3: // left click
                                 mouseButtonsDown[2] = false;
+                                this->onMouseButtonUpEvent.call(2);
                                 break;
                         }
                         break;

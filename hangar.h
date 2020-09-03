@@ -23,11 +23,11 @@
 #include <GJGO/wait.h>
 #include <Warlock/warlock.h>
 #include <Druid/druid.h>
+#include <Beacon/beacon.h>
 
 #include "keycodes.h"
 #include "keycode_converter.h"
 #include "config.h"
-#include "event.h"
 #include "window.h"
 
 #endif
