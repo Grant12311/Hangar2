@@ -58,6 +58,7 @@ namespace Hangar
         Beacon::Event<const unsigned int, const unsigned int> onResizeEvent;
         Beacon::Event<const int> onKeyUpEvent;
         Beacon::Event<const int> onKeyDownEvent;
+        Beacon::Event<const int, const int, const int, const int> onMouseMoveEvent;
         Beacon::Event<const unsigned char> onMouseButtonDownEvent;
         Beacon::Event<const unsigned char> onMouseButtonUpEvent;
         Beacon::Event<const bool> onMouseWheelScrollEvent;
@@ -109,7 +110,6 @@ namespace Hangar
                 XUndefineCursor(this->xDisplay, this->xWindow);
                 this->mouseVisible = true;
             #endif // __linux__
-
         }
 
         void clear()
@@ -169,6 +169,9 @@ namespace Hangar
                         this->keysDown.erase(itr, this->keysDown.end());
                         this->onKeyUpEvent.call(convertedKeycode);
                     }
+                        break;
+                    case MotionNotify:
+                        this->onMouseMoveEvent.call(xe.xmotion.x, xe.xmotion.y, xe.xmotion.x_root, xe.xmotion.y_root);
                         break;
                     case ButtonPress:
                         switch (this->xe.xbutton.button)
@@ -292,13 +295,21 @@ namespace Hangar
         void fetchMouse()
         {
             #ifdef __linux__
-                XQueryPointer(this->xDisplay, this->xWindow, &this->xMouseRoot, &this->xMouseChild, &this->mousePositionAbsolute[0], &this->mousePositionAbsolute[1], &this->mousePosition[0], &this->mousePosition[1], &this->xMouseMaskReturn);
+                std::array<int, 2> mousePositionTemp;
+
+                XQueryPointer(this->xDisplay, this->xWindow, &this->xMouseRoot, &this->xMouseChild, &this->mousePositionAbsolute[0], &this->mousePositionAbsolute[1], &mousePositionTemp[0], &mousePositionTemp[1], &this->xMouseMaskReturn);
                 this->mousePositionAbsolute[1] = XHeightOfScreen(this->xScreen) - this->mousePositionAbsolute[1] - 1;
                 if (this->fullscreen)
                 {
-                    this->mousePosition[1] = XHeightOfScreen(this->xScreen) - this->mousePosition[1] - 1;
+                    mousePositionTemp[1] = XHeightOfScreen(this->xScreen) - mousePositionTemp[1] - 1;
                 }else{
-                    this->mousePosition[1] = this->height - this->mousePosition[1] - 1;
+                    mousePositionTemp[1] = this->height - mousePositionTemp[1] - 1;
+                }
+
+                if (this->mousePosition != mousePositionTemp)
+                {
+                    this->mousePosition = mousePositionTemp;
+                    this->onMouseMoveEvent.call(this->mousePosition[0], this->mousePosition[1], this->mousePositionAbsolute[0], this->mousePositionAbsolute[1]);
                 }
             #endif // __linux__
         }
