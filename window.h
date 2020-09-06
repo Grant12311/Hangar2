@@ -63,6 +63,13 @@ namespace Hangar
         Beacon::Event<const unsigned char> onMouseButtonUpEvent;
         Beacon::Event<const bool> onMouseWheelScrollEvent;
 
+        void setTitle(const char* const a_title)
+        {
+            XStoreName(this->xDisplay, this->xWindow, a_title);
+
+            this->title = a_title;
+        }
+
         void setVsync(const bool a_vsync)
         {
             this->vsync = a_vsync;
