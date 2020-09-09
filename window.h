@@ -70,6 +70,13 @@ namespace Hangar
             this->title = a_title;
         }
 
+        void setTitle(const float a_title)
+        {
+            this->title = std::to_string(a_title).c_str();
+
+            XStoreName(this->xDisplay, this->xWindow, this->title);
+        }
+
         void setVsync(const bool a_vsync)
         {
             this->vsync = a_vsync;
