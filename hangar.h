@@ -10,6 +10,7 @@
 #endif // HANGAR2_OPENGL_ES
 
 #include <iostream>
+#include <cstring>
 #include <vector>
 #include <algorithm>
 
