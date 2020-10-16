@@ -12,7 +12,7 @@ namespace Hangar
         unsigned int m_oldWindowWidth;
         unsigned int m_oldWindowHeight;
     public:
-        const char* title;
+        char* title;
         bool isOpen;
         unsigned int width, height, borderWidth, depth;
         std::array<int, 2> position = {0, 0};
@@ -63,17 +63,15 @@ namespace Hangar
         Beacon::Event<const unsigned char> onMouseButtonUpEvent;
         Beacon::Event<const bool> onMouseWheelScrollEvent;
 
-        void setTitle(const char* const a_title)
+        void setTitle(char* const a_title)
         {
-            XStoreName(this->xDisplay, this->xWindow, a_title);
-
             this->title = a_title;
+            XStoreName(this->xDisplay, this->xWindow, a_title);
         }
 
         void setTitle(const float a_title)
         {
-            this->title = std::to_string(a_title).c_str();
-
+            strcpy(this->title, std::to_string(a_title).c_str());
             XStoreName(this->xDisplay, this->xWindow, this->title);
         }
 
