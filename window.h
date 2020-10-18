@@ -36,6 +36,12 @@ namespace Hangar
             Atom wmDelete;
             Atom wmState;
             Atom wmFullscreen;
+
+            GLXFBConfig* xFramebufferConfigs;
+            XVisualInfo* xVisualInfo;
+            Colormap xColorMap;
+            XSetWindowAttributes xSetWindowAttributes;
+            GLXContext xOpenGLContext;
         #endif // __linux__
 
         //Keyboard
@@ -51,8 +57,6 @@ namespace Hangar
             ::Window xMouseRoot, xMouseChild;
             unsigned int xMouseMaskReturn;
         #endif // __linux__
-
-        Warlock::Context* openglContext;
 
         Beacon::Event<const int, const int> onMoveEvent;
         Beacon::Event<const unsigned int, const unsigned int> onResizeEvent;
@@ -77,8 +81,8 @@ namespace Hangar
 
         void setVsync(const bool a_vsync)
         {
-            this->vsync = a_vsync;
-            this->openglContext->makeCurrent(a_vsync);
+            //this->vsync = a_vsync;
+            //this->openglContext->makeCurrent(a_vsync);
         }
 
         bool keyIsDown(const int a_key)
@@ -237,13 +241,15 @@ namespace Hangar
 
         void swapBuffers()
         {
-            this->openglContext->swapBuffers();
-            if (this->vsync)
-            {
-                GJGO::wait(this->m_frametimeCap - this->m_frametimeTracker.elapsed());
-            }
-            this->deltaTime = this->m_frametimeTracker.elapsed();
-            this->m_frametimeTracker.reset();
+            #ifdef __linux__
+                glXSwapBuffers(this->xDisplay, this->xWindow);
+                if (this->vsync)
+                {
+                    GJGO::wait(this->m_frametimeCap - this->m_frametimeTracker.elapsed());
+                }
+                this->deltaTime = this->m_frametimeTracker.elapsed();
+                this->m_frametimeTracker.reset();
+            #endif // __linux__
         }
 
         Window(const Config &a_config = Config()) :
@@ -260,11 +266,47 @@ namespace Hangar
                 }
 
                 this->xScreenNum = XDefaultScreen(this->xDisplay);
+
+                int doubleBufferAttributes[] =
+                {
+                    GLX_X_RENDERABLE, True,
+                    GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+                    GLX_RENDER_TYPE, GLX_RGBA_BIT,
+                    GLX_X_VISUAL_TYPE, GLX_TRUE_COLOR,
+                    GLX_RED_SIZE, 8,
+                    GLX_GREEN_SIZE, 8,
+                    GLX_BLUE_SIZE, 8,
+                    GLX_ALPHA_SIZE, 8,
+                    GLX_DEPTH_SIZE, 24,
+                    GLX_STENCIL_SIZE, 8,
+                    GLX_DOUBLEBUFFER, True,
+                    None
+                };
+
+                int numReturned = 0;
+                this->xFramebufferConfigs = glXChooseFBConfig(this->xDisplay, this->xScreenNum, doubleBufferAttributes, &numReturned);
+                if (this->xFramebufferConfigs == NULL)
+                {
+                    std::cout << "No double buffered config available" << std::endl;
+                    exit(1);
+                }
+
+                this->xVisualInfo = glXGetVisualFromFBConfig(this->xDisplay, this->xFramebufferConfigs[0]);
+                if(this->xVisualInfo == NULL)
+                {
+                    std::cout << "No appropriate visual found" << std::endl;
+                    exit(1);
+                }
+
+                this->xRoot = DefaultRootWindow(this->xDisplay);
+                this->xColorMap = XCreateColormap(this->xDisplay, this->xRoot, this->xVisualInfo->visual, AllocNone);
+                this->xSetWindowAttributes.colormap = this->xColorMap;
+                this->xSetWindowAttributes.event_mask = StructureNotifyMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask;
+
                 this->xScreen = XDefaultScreenOfDisplay(this->xDisplay);
-                this->xWindow = XCreateSimpleWindow(this->xDisplay, XRootWindow(this->xDisplay, this->xScreenNum), 10, 10, a_config.width, a_config.height, 1,
-                                                    BlackPixel(this->xDisplay, this->xScreenNum), WhitePixel(this->xDisplay, this->xScreenNum));
-                XSetStandardProperties(this->xDisplay, this->xWindow, a_config.title, a_config.title, None, NULL, 0, NULL);
-                XSelectInput(this->xDisplay, this->xWindow, StructureNotifyMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | ButtonReleaseMask);
+                this->xWindow = XCreateWindow(this->xDisplay, this->xRoot, 0, 0, a_config.width, a_config.height, 1, this->xVisualInfo->depth, InputOutput, this->xVisualInfo->visual,
+                                              CWColormap | CWEventMask, &this->xSetWindowAttributes);
+                XStoreName(this->xDisplay, this->xWindow, a_config.title);
                 XAutoRepeatOff(this->xDisplay);
 
                 this->wmDelete = XInternAtom(this->xDisplay, "WM_DELETE_WINDOW", true);
@@ -288,15 +330,13 @@ namespace Hangar
                     this->width = XWidthOfScreen(this->xScreen);
                 }
 
-                this->openglContext = new Warlock::Context(this->xDisplay, this->xWindow);
-                this->openglContext->makeCurrent(a_config.vsync);
+                this->xOpenGLContext = glXCreateContext(this->xDisplay, this->xVisualInfo, NULL, GL_TRUE);
+                glXMakeCurrent(this->xDisplay, this->xWindow, this->xOpenGLContext);
             #endif // __linux__
         }
 
         ~Window()
         {
-            delete this->openglContext;
-
             #ifdef __linux__
                 XAutoRepeatOn(this->xDisplay);
                 XDestroyWindow(this->xDisplay, this->xWindow);
