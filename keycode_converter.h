@@ -35,7 +35,7 @@ namespace Hangar
 {
     #ifdef __linux__
     // {0, 0},
-        std::unordered_map<int, int> convertKeycode = {
+        inline std::unordered_map<int, int> convertKeycode = {
             {0, HGR_mouse_left}, {1, HGR_mouse_right}, {2, HGR_mouse_middle},
             {XK_Escape, HGR_escape}, {65407, HGR_numlock}, {HGR_printscreen, HGR_printscreen}, {XK_Delete, HGR_delete}, {XK_BackSpace, HGR_backspace}, {XK_Tab, HGR_tab},
             {XK_Caps_Lock, HGR_capslock}, {XK_Return, HGR_enter}, {XK_Shift_L, HGR_shift_left}, {XK_Shift_R, HGR_shift_right}, {XK_Control_L, HGR_control_left}, {XK_Control_R, HGR_control_right},
