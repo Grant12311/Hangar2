@@ -13,9 +13,9 @@
     #include <GL/glx.h>
 #endif // __linux__
 
+#include <Druid/guard.h>
 #include <GJGO/timer.h>
 #include <GJGO/wait.h>
-#include <Druid/druid.h>
 #include <Beacon/beacon.h>
 
 #include "keycodes.h"
