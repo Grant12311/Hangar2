@@ -330,7 +330,26 @@ namespace Hangar
                     this->width = XWidthOfScreen(this->xScreen);
                 }
 
-                this->xOpenGLContext = glXCreateContext(this->xDisplay, this->xVisualInfo, NULL, GL_TRUE);
+                int glContextTypeBit;
+                if (a_config.useOpenGLES)
+                {
+                    glContextTypeBit = GLX_CONTEXT_ES_PROFILE_BIT_EXT;
+                }else{
+                    glContextTypeBit = GLX_CONTEXT_CORE_PROFILE_BIT_ARB;
+                }
+
+                int contextAttribs[] =
+                {
+                    GLX_CONTEXT_MAJOR_VERSION_ARB, a_config.openglMajorVersion,
+                    GLX_CONTEXT_MINOR_VERSION_ARB, a_config.openglMinorVersion,
+                    GLX_CONTEXT_PROFILE_MASK_ARB, glContextTypeBit,
+                    None
+                };
+
+                typedef GLXContext (*glXCreateContextAttribsARBProc)(Display*, GLXFBConfig, GLXContext, Bool, const int*);
+                glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
+
+                this->xOpenGLContext = glXCreateContextAttribsARB(this->xDisplay, xFramebufferConfigs[0], 0, GL_TRUE, contextAttribs);
                 glXMakeCurrent(this->xDisplay, this->xWindow, this->xOpenGLContext);
             #endif // __linux__
         }

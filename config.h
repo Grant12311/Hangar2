@@ -16,6 +16,10 @@ namespace Hangar
         bool mouseIsEndless = false;
 
         bool resizeViewportToMatchWindowSize = true;
+
+        unsigned char openglMajorVersion = 3;
+        unsigned char openglMinorVersion = 1;
+        bool useOpenGLES = true;
     };
 }
 
