@@ -1,6 +1,8 @@
 #ifndef HANGAR2_WINDOW_H
 #define HANGAR2_WINDOW_H
 
+#include <string>
+
 namespace Hangar
 {
     class Window
@@ -12,7 +14,7 @@ namespace Hangar
         unsigned int m_oldWindowWidth;
         unsigned int m_oldWindowHeight;
     public:
-        char* title;
+        std::string title;
         bool isOpen;
         unsigned int width, height, borderWidth, depth;
         std::array<int, 2> position = {0, 0};
@@ -67,16 +69,16 @@ namespace Hangar
         Beacon::Event<const unsigned char> onMouseButtonUpEvent;
         Beacon::Event<const bool> onMouseWheelScrollEvent;
 
-        void setTitle(char* const a_title)
+        void setTitle(const std::string &a_title)
         {
             this->title = a_title;
-            XStoreName(this->xDisplay, this->xWindow, a_title);
+            XStoreName(this->xDisplay, this->xWindow, a_title.c_str());
         }
 
         void setTitle(const float a_title)
         {
-            strcpy(this->title, std::to_string(a_title).c_str());
-            XStoreName(this->xDisplay, this->xWindow, this->title);
+            this->title = std::to_string(a_title);
+            XStoreName(this->xDisplay, this->xWindow, this->title.c_str());
         }
 
         void setVsync(const bool a_vsync)
