@@ -81,12 +81,6 @@ namespace Hangar
             XStoreName(this->xDisplay, this->xWindow, this->title.c_str());
         }
 
-        void setVsync(const bool a_vsync)
-        {
-            //this->vsync = a_vsync;
-            //this->openglContext->makeCurrent(a_vsync);
-        }
-
         bool keyIsDown(const int a_key)
         {
             for (int &var : this->keysDown)
