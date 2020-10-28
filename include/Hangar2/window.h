@@ -140,7 +140,7 @@ namespace Hangar
                 switch (this->xe.type)
                 {
                     case ConfigureNotify:
-                        if (this->width != xe.xconfigure.width || this->height != xe.xconfigure.height)
+                        if (this->width != static_cast<unsigned int>(xe.xconfigure.width) || this->height != static_cast<unsigned int>(xe.xconfigure.height))
                         {
                             this->width = xe.xconfigure.width;
                             this->height = xe.xconfigure.height;
