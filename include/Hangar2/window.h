@@ -249,7 +249,7 @@ namespace Hangar
         }
 
         Window(const Config &a_config = Config()) :
-            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, title{a_config.title}, isOpen{true}, height{a_config.height}, width{a_config.width}, borderWidth{a_config.borderWidth},
+            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, title{a_config.title}, isOpen{true}, width{a_config.width}, height{a_config.height}, borderWidth{a_config.borderWidth},
             depth{a_config.depth}, fullscreen{a_config.fullscreen}, vsync{a_config.vsync}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible}, mouseIsEndless{a_config.mouseIsEndless},
             resizeViewportToMatchWindowSize{a_config.resizeViewportToMatchWindowSize}, closeOnEscape{a_config.closeOnEscape}
         {
