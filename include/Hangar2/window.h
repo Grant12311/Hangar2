@@ -360,6 +360,8 @@ namespace Hangar
         {
             #ifdef __linux__
                 XAutoRepeatOn(this->xDisplay);
+                XFree(this->xVisualInfo);
+                XFreeColormap(this->xDisplay, this->xColorMap);
                 XDestroyWindow(this->xDisplay, this->xWindow);
                 XCloseDisplay(this->xDisplay);
             #endif // __linux__
