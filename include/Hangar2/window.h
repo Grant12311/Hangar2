@@ -21,7 +21,7 @@ namespace Hangar
         bool fullscreen;
         bool vsync;
         float fpsLimit;
-        float deltaTime = 0;
+        double deltaTime = 0.0d;
 
         bool mouseVisible;
         bool mouseIsEndless;
