@@ -64,6 +64,7 @@ namespace Hangar
         Beacon::Event<const unsigned int, const unsigned int> onResizeEvent;
         Beacon::Event<const int> onKeyUpEvent;
         Beacon::Event<const int> onKeyDownEvent;
+        Beacon::Event<const int> onKeyTypedEvent;
         Beacon::Event<const int, const int, const int, const int> onMouseMoveEvent;
         Beacon::Event<const unsigned char> onMouseButtonDownEvent;
         Beacon::Event<const unsigned char> onMouseButtonUpEvent;
@@ -171,6 +172,24 @@ namespace Hangar
                         {
                             this->keysDown.push_back(convertedKeycode);
                             this->onKeyDownEvent.call(convertedKeycode);
+
+                            // onKeyTypedEvent
+                            if (std::find(letterKeycodes.begin(), letterKeycodes.end(), convertedKeycode) != letterKeycodes.end())
+                            {
+                                if (this->keyIsDown(HGR_shift_left) || this->keyIsDown(HGR_shift_right))
+                                {
+                                    convertedKeycode -= 32;
+                                }
+                                this->onKeyTypedEvent.call(convertedKeycode);
+                            }else if (std::find(upperableSymbols.begin(), upperableSymbols.end(), convertedKeycode) != upperableSymbols.end()){
+                                if (this->keyIsDown(HGR_shift_left) || this->keyIsDown(HGR_shift_right))
+                                {
+                                    convertedKeycode = convertSymbolToUpper[convertedKeycode];
+                                }
+                                this->onKeyTypedEvent.call(convertedKeycode);
+                            }else if (std::find(nonCapitalizableCharKeycodes.begin(), nonCapitalizableCharKeycodes.end(), convertedKeycode) != nonCapitalizableCharKeycodes.end()){
+                                this->onKeyTypedEvent.call(convertedKeycode);
+                            }
                         }
                     }
                         break;
