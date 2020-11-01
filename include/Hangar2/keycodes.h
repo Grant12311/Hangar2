@@ -1,6 +1,10 @@
 #ifndef HANGAR2_KEYCODES_H
 #define HANGAR2_KEYCODES_H
 
+#include <cstdint>
+#include <array>
+#include <unordered_map>
+
 // Largest Keycode: 155
 
 #define HGR_mouse_left   0
@@ -143,7 +147,31 @@
 #define HGR_period            46
 #define HGR_less_than         60
 #define HGR_greater_than      62
-#define HGR_fowardslash       47
+#define HGR_forwardslash      47
 #define HGR_question_mark     63
+
+namespace Hangar
+{
+    static std::array<uint32_t, 26> letterKeycodes = {
+        HGR_q, HGR_w, HGR_e, HGR_r, HGR_t, HGR_y, HGR_u, HGR_i, HGR_o, HGR_p, HGR_a, HGR_s, HGR_d, HGR_f, HGR_g, HGR_h, HGR_j, HGR_k, HGR_l, HGR_z, HGR_x, HGR_c, HGR_v, HGR_b, HGR_n,
+        HGR_m
+    };
+
+    static std::array<uint32_t, 21> upperableSymbols = {
+        HGR_backtick, HGR_1, HGR_2, HGR_3, HGR_4, HGR_5, HGR_6, HGR_7, HGR_8, HGR_9, HGR_0, HGR_hyphen, HGR_equals, HGR_bracket_left, HGR_bracket_right, HGR_backslash, HGR_semicolon,
+        HGR_apostrophe, HGR_comma, HGR_period, HGR_forwardslash
+    };
+
+    static std::array<uint32_t, 3> nonCapitalizableCharKeycodes = {
+        HGR_tab, HGR_enter, HGR_space
+    };
+
+    static std::unordered_map<uint32_t, uint32_t> convertSymbolToUpper = {
+        {HGR_backtick, HGR_tilde}, {HGR_1, HGR_exclamation_mark}, {HGR_2, HGR_at}, {HGR_3, HGR_pound}, {HGR_4, HGR_dollar}, {HGR_5, HGR_percent}, {HGR_6, HGR_caret},
+        {HGR_7, HGR_ampersand}, {HGR_8, HGR_asterisk}, {HGR_9, HGR_parenthesis_left}, {HGR_0, HGR_parenthesis_right}, {HGR_hyphen, HGR_underscore}, {HGR_equals, HGR_plus},
+        {HGR_bracket_left, HGR_brace_left}, {HGR_bracket_right, HGR_brace_right}, {HGR_backslash, HGR_pipe}, {HGR_semicolon, HGR_colon}, {HGR_apostrophe, HGR_quotation_mark},
+        {HGR_comma, HGR_less_than}, {HGR_period, HGR_greater_than}, {HGR_forwardslash, HGR_question_mark}
+    };
+}
 
 #endif
