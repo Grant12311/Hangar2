@@ -35,7 +35,7 @@ namespace Hangar
 {
     #ifdef __linux__
     // {0, 0},
-        inline std::unordered_map<int, int> convertKeycode = {
+        inline std::unordered_map<uint32_t, uint32_t> convertKeycode = {
             {0, HGR_mouse_left}, {1, HGR_mouse_right}, {2, HGR_mouse_middle},
             {XK_Escape, HGR_escape}, {65407, HGR_numlock}, {HGR_printscreen, HGR_printscreen}, {XK_Delete, HGR_delete}, {XK_BackSpace, HGR_backspace}, {XK_Tab, HGR_tab},
             {XK_Caps_Lock, HGR_capslock}, {XK_Return, HGR_enter}, {XK_Shift_L, HGR_shift_left}, {XK_Shift_R, HGR_shift_right}, {XK_Control_L, HGR_control_left}, {XK_Control_R, HGR_control_right},
@@ -47,9 +47,9 @@ namespace Hangar
             {XK_j, HGR_j}, {XK_k, HGR_k}, {XK_l, HGR_l}, {XK_z, HGR_z}, {XK_x, HGR_x}, {XK_c, HGR_c}, {XK_v, HGR_v}, {XK_b, HGR_b}, {XK_n, HGR_n}, {XK_m, HGR_m}, {XK_Q, HGR_Q},
             {XK_W, HGR_W}, {XK_E, HGR_E}, {XK_R, HGR_R}, {XK_T, HGR_T}, {XK_Y, HGR_Y}, {XK_U, HGR_U}, {XK_I, HGR_I}, {XK_O, HGR_O}, {XK_P, HGR_P}, {XK_A, HGR_A}, {XK_S, HGR_S},
             {XK_D, HGR_D}, {XK_F, HGR_F}, {XK_G, HGR_G}, {XK_H, HGR_H}, {XK_J, HGR_J}, {XK_K, HGR_K}, {XK_L, HGR_L}, {XK_Z, HGR_Z}, {XK_X, HGR_X}, {XK_C, HGR_C}, {XK_V, HGR_V},
-            {XK_B, HGR_B}, {XK_N, HGR_N}, {XK_M, HGR_M}, {XK_space, HGR_space}, {96, HGR_backtick}, {XK_hyphen, HGR_hyphen}, {XK_equal, HGR_equals}, {XK_bracketleft, HGR_bracket_left},
+            {XK_B, HGR_B}, {XK_N, HGR_N}, {XK_M, HGR_M}, {XK_space, HGR_space}, {96, HGR_backtick}, {XK_minus, HGR_hyphen}, {XK_equal, HGR_equals}, {XK_bracketleft, HGR_bracket_left},
             {XK_bracketright, HGR_bracket_right}, {XK_backslash, HGR_backslash}, {XK_semicolon, HGR_semicolon}, {XK_apostrophe, HGR_apostrophe}, {XK_comma, HGR_comma},
-            {XK_period, HGR_period}, {XK_slash, HGR_fowardslash}
+            {XK_period, HGR_period}, {XK_slash, HGR_forwardslash}
         };
     #endif // __linux__
 }
