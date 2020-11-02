@@ -166,6 +166,11 @@ namespace Hangar
         HGR_tab, HGR_enter, HGR_space
     };
 
+    static std::array<int, 24> noTypeKeycodes = {
+        HGR_escape, HGR_f1, HGR_f2, HGR_f3, HGR_f4, HGR_f5, HGR_f6, HGR_f7, HGR_f8, HGR_f9, HGR_f10, HGR_f11, HGR_f12, HGR_numlock, HGR_printscreen, HGR_capslock, HGR_shift_left, HGR_shift_right,
+        HGR_control_left, HGR_control_right, HGR_function, HGR_super, HGR_alt_left, HGR_alt_right
+    };
+
     static std::unordered_map<uint32_t, uint32_t> convertSymbolToUpper = {
         {HGR_backtick, HGR_tilde}, {HGR_1, HGR_exclamation_mark}, {HGR_2, HGR_at}, {HGR_3, HGR_pound}, {HGR_4, HGR_dollar}, {HGR_5, HGR_percent}, {HGR_6, HGR_caret},
         {HGR_7, HGR_ampersand}, {HGR_8, HGR_asterisk}, {HGR_9, HGR_parenthesis_left}, {HGR_0, HGR_parenthesis_right}, {HGR_hyphen, HGR_underscore}, {HGR_equals, HGR_plus},

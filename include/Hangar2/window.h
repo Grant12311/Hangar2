@@ -26,14 +26,6 @@
 
 namespace Hangar
 {
-    enum class KeycodeType
-    {
-        letter,
-        symbol,
-        nonUpperableChar,
-        action
-    };
-
     class Window
     {
     private:
@@ -94,7 +86,7 @@ namespace Hangar
         Beacon::Event<const unsigned int, const unsigned int> onResizeEvent;
         Beacon::Event<const int> onKeyUpEvent;
         Beacon::Event<const int> onKeyDownEvent;
-        Beacon::Event<const int, KeycodeType> onKeyTypedDownEvent;
+        Beacon::Event<const int> onKeyTypedDownEvent;
         Beacon::Event<const int> onKeyTypedUpEvent;
         Beacon::Event<const int, const int, const int, const int> onMouseMoveEvent;
         Beacon::Event<const unsigned char> onMouseButtonDownEvent;
@@ -165,6 +157,13 @@ namespace Hangar
         {
             #ifdef __linux__
             this->mouseWheelEvents.clear();
+
+            for (const int l_keycode : this->keysTypedToRelease)
+            {
+                this->onKeyTypedUpEvent.call(l_keycode);
+            }
+            this->keysTypedToRelease.clear();
+
             while (XPending(this->xDisplay))
             {
                 XNextEvent(this->xDisplay, &this->xe);
@@ -198,8 +197,7 @@ namespace Hangar
                     {
                         if (XLookupKeysym(&this->xe.xkey, 0) == XK_Escape && this->closeOnEscape)
                             this->isOpen = false;
-                        int convertedKeycode = convertKeycode[XkbKeycodeToKeysym(this->xDisplay, this->xe.xkey.keycode, 0, (this->xe.xkey.state & ShiftMask) ? 1 : 0)];
-                        std::cout << "Code: " << convertedKeycode << std::endl;
+                        int convertedKeycode = convertKeycode[XkbKeycodeToKeysym(this->xDisplay, this->xe.xkey.keycode, 0, 0)];
                         if (!this->keyIsDown(convertedKeycode))
                         {
                             this->keysDown.push_back(convertedKeycode);
@@ -207,26 +205,16 @@ namespace Hangar
                         }
 
                         // onKeyTypedEvent
-                        if (std::find(letterKeycodes.begin(), letterKeycodes.end(), convertedKeycode) != letterKeycodes.end())
+                        if (std::find(noTypeKeycodes.begin(), noTypeKeycodes.end(), convertedKeycode) == noTypeKeycodes.end())
                         {
-                            if (this->keyIsDown(HGR_shift_left) || this->keyIsDown(HGR_shift_right))
-                            {
-                                convertedKeycode -= 32;
-                            }
-                            this->onKeyTypedDownEvent.call(convertedKeycode, KeycodeType::letter);
-                            this->keysTypedToRelease.emplace_back(convertedKeycode);
-                        }else if (std::find(upperableSymbols.begin(), upperableSymbols.end(), convertedKeycode) != upperableSymbols.end()){
-                            if (this->keyIsDown(HGR_shift_left) || this->keyIsDown(HGR_shift_right))
+                            if ((this->keyIsDown(HGR_shift_left) || this->keyIsDown(HGR_shift_right)) && std::find(upperableSymbols.begin(), upperableSymbols.end(), convertedKeycode) != upperableSymbols.end())
                             {
                                 convertedKeycode = convertSymbolToUpper[convertedKeycode];
+                            }else{
+                                convertedKeycode = convertKeycode[XkbKeycodeToKeysym(this->xDisplay, this->xe.xkey.keycode, 0, (this->xe.xkey.state & ShiftMask) ? 1 : 0)];
                             }
-                            this->onKeyTypedDownEvent.call(convertedKeycode, KeycodeType::symbol);
-                            this->keysTypedToRelease.emplace_back(convertedKeycode);
-                        }else if (std::find(nonCapitalizableCharKeycodes.begin(), nonCapitalizableCharKeycodes.end(), convertedKeycode) != nonCapitalizableCharKeycodes.end()){
-                            this->onKeyTypedDownEvent.call(convertedKeycode, KeycodeType::nonUpperableChar);
-                            this->keysTypedToRelease.emplace_back(convertedKeycode);
-                        }else{
-                            this->onKeyTypedDownEvent.call(convertedKeycode, KeycodeType::action);
+
+                            this->onKeyTypedDownEvent.call(convertedKeycode);
                             this->keysTypedToRelease.emplace_back(convertedKeycode);
                         }
                     }
@@ -286,12 +274,6 @@ namespace Hangar
                         break;
                 }
             }
-
-            for (const int l_keycode : this->keysTypedToRelease)
-            {
-                this->onKeyTypedUpEvent.call(l_keycode);
-            }
-            this->keysTypedToRelease.clear();
 
             // Update Mouse
             this->fetchMouse();
