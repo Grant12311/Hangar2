@@ -197,7 +197,7 @@ namespace Hangar
                     {
                         if (XLookupKeysym(&this->xe.xkey, 0) == XK_Escape && this->closeOnEscape)
                             this->isOpen = false;
-                        int convertedKeycode = convertKeycode[XkbKeycodeToKeysym(this->xDisplay, this->xe.xkey.keycode, 0, 0)];
+                        int convertedKeycode = convertKeycode[XkbKeycodeToKeysym(this->xDisplay, static_cast<unsigned char>(this->xe.xkey.keycode), 0, 0)];
                         if (!this->keyIsDown(convertedKeycode))
                         {
                             this->keysDown.push_back(convertedKeycode);
@@ -211,7 +211,7 @@ namespace Hangar
                             {
                                 convertedKeycode = convertSymbolToUpper[convertedKeycode];
                             }else{
-                                convertedKeycode = convertKeycode[XkbKeycodeToKeysym(this->xDisplay, this->xe.xkey.keycode, 0, (this->xe.xkey.state & ShiftMask) ? 1 : 0)];
+                                convertedKeycode = convertKeycode[XkbKeycodeToKeysym(this->xDisplay, static_cast<unsigned char>(this->xe.xkey.keycode), 0, (this->xe.xkey.state & ShiftMask) ? 1 : 0)];
                             }
 
                             this->onKeyTypedDownEvent.call(convertedKeycode);
