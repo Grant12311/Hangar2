@@ -35,9 +35,9 @@ namespace Hangar
         unsigned int m_oldWindowWidth;
         unsigned int m_oldWindowHeight;
 
+        std::string m_title;
         bool m_vsync;
     public:
-        std::string title;
         bool isOpen;
         unsigned int width, height, borderWidth, depth;
         std::array<int, 2> position = {0, 0};
@@ -94,10 +94,15 @@ namespace Hangar
         Beacon::Event<const unsigned char> onMouseButtonUpEvent;
         Beacon::Event<const bool> onMouseWheelScrollEvent;
 
+        std::string getTitle()
+        {
+            return this->m_title;
+        }
+
         void setTitle(const std::string &a_title)
         {
             #ifdef __linux__
-                this->title = a_title;
+                this->m_title = a_title;
                 XStoreName(this->xDisplay, this->xWindow, a_title.c_str());
             #endif // __linux__
         }
@@ -105,8 +110,8 @@ namespace Hangar
         void setTitle(const float a_title)
         {
             #ifdef __linux__
-                this->title = std::to_string(a_title);
-                XStoreName(this->xDisplay, this->xWindow, this->title.c_str());
+                this->m_title = std::to_string(a_title);
+                XStoreName(this->xDisplay, this->xWindow, this->m_title.c_str());
             #endif // __LINUX__
         }
 
@@ -319,7 +324,7 @@ namespace Hangar
         }
 
         Window(const Config &a_config = Config()) :
-            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, title{a_config.title}, isOpen{true}, width{a_config.width}, height{a_config.height}, borderWidth{a_config.borderWidth},
+            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, m_title{a_config.title}, isOpen{true}, width{a_config.width}, height{a_config.height}, borderWidth{a_config.borderWidth},
             depth{a_config.depth}, fullscreen{a_config.fullscreen}, m_vsync{a_config.vsync}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible}, mouseIsEndless{a_config.mouseIsEndless},
             resizeViewportToMatchWindowSize{a_config.resizeViewportToMatchWindowSize}, closeOnEscape{a_config.closeOnEscape}
         {
