@@ -121,6 +121,13 @@ namespace Hangar
             #endif // __linux__
         }
 
+        void setSize(const unsigned int a_width, const unsigned int a_height)
+        {
+            #ifdef __linux__
+                XResizeWindow(this->xDisplay, this->xWindow, a_width, a_height);
+            #endif // __linux__
+        }
+
         inline bool vsyncEnabled() { return this->m_vsync; }
 
         void setVsync(const bool a_status)
