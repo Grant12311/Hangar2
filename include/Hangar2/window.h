@@ -115,6 +115,13 @@ namespace Hangar
             #endif // __LINUX__
         }
 
+        void setPosition(const unsigned int a_x, const unsigned int a_y)
+        {
+            #ifdef __linux__
+                XMoveWindow(this->xDisplay, this->xWindow, a_x - 1, this->height - a_y + 91);
+            #endif // __linux__
+        }
+
         bool vsyncEnabled()
         {
             return this->m_vsync;
