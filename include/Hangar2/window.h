@@ -34,13 +34,14 @@ namespace Hangar
 
         unsigned int m_oldWindowWidth;
         unsigned int m_oldWindowHeight;
+
+        bool m_vsync;
     public:
         std::string title;
         bool isOpen;
         unsigned int width, height, borderWidth, depth;
         std::array<int, 2> position = {0, 0};
         bool fullscreen;
-        bool vsync;
         float fpsLimit;
         double deltaTime = 0.0d;
 
@@ -103,10 +104,15 @@ namespace Hangar
 
         void setTitle(const float a_title)
         {
-            #ifdef __LINUX__
+            #ifdef __linux__
                 this->title = std::to_string(a_title);
                 XStoreName(this->xDisplay, this->xWindow, this->title.c_str());
             #endif // __LINUX__
+        }
+
+        bool vsyncIsEnabled()
+        {
+            return this->m_vsync;
         }
 
         void setVsync(const int a_status)
@@ -114,7 +120,7 @@ namespace Hangar
             #ifdef __linux__
                 static PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(reinterpret_cast<const unsigned char*>("glXSwapIntervalSGI")));
                 glxSwapIntervalSGI(a_status);
-                this->vsync = a_status;
+                this->m_vsync = a_status;
             #endif // __linux__
         }
 
@@ -302,7 +308,7 @@ namespace Hangar
         {
             #ifdef __linux__
                 glXSwapBuffers(this->xDisplay, this->xWindow);
-                if (this->vsync)
+                if (this->m_vsync)
                 {
                     std::cout << "timed" << std::endl;
                     GJGO::wait(this->m_frametimeCap - this->m_frametimeTracker.elapsed());
@@ -314,7 +320,7 @@ namespace Hangar
 
         Window(const Config &a_config = Config()) :
             m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, title{a_config.title}, isOpen{true}, width{a_config.width}, height{a_config.height}, borderWidth{a_config.borderWidth},
-            depth{a_config.depth}, fullscreen{a_config.fullscreen}, vsync{a_config.vsync}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible}, mouseIsEndless{a_config.mouseIsEndless},
+            depth{a_config.depth}, fullscreen{a_config.fullscreen}, m_vsync{a_config.vsync}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible}, mouseIsEndless{a_config.mouseIsEndless},
             resizeViewportToMatchWindowSize{a_config.resizeViewportToMatchWindowSize}, closeOnEscape{a_config.closeOnEscape}
         {
             #ifdef __linux__
