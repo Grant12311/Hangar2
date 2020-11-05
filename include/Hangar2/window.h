@@ -110,7 +110,7 @@ namespace Hangar
             #endif // __LINUX__
         }
 
-        bool vsyncIsEnabled()
+        bool vsyncEnabled()
         {
             return this->m_vsync;
         }
