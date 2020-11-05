@@ -94,10 +94,7 @@ namespace Hangar
         Beacon::Event<const unsigned char> onMouseButtonUpEvent;
         Beacon::Event<const bool> onMouseWheelScrollEvent;
 
-        std::string getTitle()
-        {
-            return this->m_title;
-        }
+        inline std::string getTitle() { return this->m_title; }
 
         void setTitle(const std::string &a_title)
         {
@@ -115,10 +112,7 @@ namespace Hangar
             #endif // __LINUX__
         }
 
-        std::array<int, 2> getPosition()
-        {
-            return this->m_position;
-        }
+        inline std::array<int, 2> getPosition() { return this->m_position; }
 
         void setPosition(const unsigned int a_x, const unsigned int a_y)
         {
@@ -127,10 +121,7 @@ namespace Hangar
             #endif // __linux__
         }
 
-        bool vsyncEnabled()
-        {
-            return this->m_vsync;
-        }
+        inline bool vsyncEnabled() { return this->m_vsync; }
 
         void setVsync(const bool a_status)
         {
