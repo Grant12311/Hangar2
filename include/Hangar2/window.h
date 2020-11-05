@@ -37,10 +37,11 @@ namespace Hangar
 
         std::string m_title;
         std::array<int, 2> m_position = {0, 0};
+        unsigned int m_width, m_height;
         bool m_vsync;
     public:
         bool isOpen;
-        unsigned int width, height, borderWidth, depth;
+        unsigned int borderWidth, depth;
         bool fullscreen;
         float fpsLimit;
         double deltaTime = 0.0d;
@@ -117,9 +118,13 @@ namespace Hangar
         void setPosition(const unsigned int a_x, const unsigned int a_y)
         {
             #ifdef __linux__
-                XMoveWindow(this->xDisplay, this->xWindow, a_x - 1, this->height - a_y + 91);
+                XMoveWindow(this->xDisplay, this->xWindow, a_x - 1, this->m_height - a_y + 91);
             #endif // __linux__
         }
+
+        inline unsigned int getWidth() { return this->m_width; }
+        inline unsigned int getHeight() { return this->m_height; }
+        inline std::array<unsigned int, 2> getSize()  { return {this->m_width, this->m_height}; }
 
         void setSize(const unsigned int a_width, const unsigned int a_height)
         {
@@ -210,21 +215,21 @@ namespace Hangar
                 switch (this->xe.type)
                 {
                     case ConfigureNotify:
-                        if (this->width != static_cast<unsigned int>(xe.xconfigure.width) || this->height != static_cast<unsigned int>(xe.xconfigure.height))
+                        if (this->m_width != static_cast<unsigned int>(xe.xconfigure.width) || this->m_height != static_cast<unsigned int>(xe.xconfigure.height))
                         {
-                            this->width = xe.xconfigure.width;
-                            this->height = xe.xconfigure.height;
-                            this->onResizeEvent.call(this->width, this->height);
+                            this->m_width = xe.xconfigure.width;
+                            this->m_height = xe.xconfigure.height;
+                            this->onResizeEvent.call(this->m_width, this->m_height);
 
                             if (this->resizeViewportToMatchWindowSize)
                             {
-                                glCall(glViewport(0, 0, this->width, this->height));
+                                glCall(glViewport(0, 0, this->m_width, this->m_height));
                             }
                         }
                         if (this->m_position[0] != xe.xconfigure.x || this->m_position[1] != xe.xconfigure.y)
                         {
                             this->m_position[0] = xe.xconfigure.x;
-                            this->m_position[1] = XHeightOfScreen(this->xScreen) - xe.xconfigure.y - this->height;
+                            this->m_position[1] = XHeightOfScreen(this->xScreen) - xe.xconfigure.y - this->m_height;
                             this->onMoveEvent.call(this->m_position[0], this->m_position[1]);
                         }
                         break;
@@ -334,9 +339,9 @@ namespace Hangar
         }
 
         Window(const Config &a_config = Config()) :
-            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, m_title{a_config.title}, m_vsync{a_config.vsync}, isOpen{true}, width{a_config.width}, height{a_config.height}, borderWidth{a_config.borderWidth},
-            depth{a_config.depth}, fullscreen{a_config.fullscreen}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible}, mouseIsEndless{a_config.mouseIsEndless},
-            resizeViewportToMatchWindowSize{a_config.resizeViewportToMatchWindowSize}, closeOnEscape{a_config.closeOnEscape}
+            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, m_title{a_config.title}, m_width{a_config.width}, m_height{a_config.height}, m_vsync{a_config.vsync}, isOpen{true},
+            borderWidth{a_config.borderWidth}, depth{a_config.depth}, fullscreen{a_config.fullscreen}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible},
+            mouseIsEndless{a_config.mouseIsEndless}, resizeViewportToMatchWindowSize{a_config.resizeViewportToMatchWindowSize}, closeOnEscape{a_config.closeOnEscape}
         {
             #ifdef __linux__
                 this->xDisplay = XOpenDisplay(NULL);
@@ -406,11 +411,11 @@ namespace Hangar
 
                 XMapWindow(this->xDisplay, this->xWindow);
 
-                XGetGeometry(this->xDisplay, this->xWindow, &this->xRoot, &this->m_position[0], &this->m_position[1], &this->width, &this->height, &this->borderWidth, &this->depth);
+                XGetGeometry(this->xDisplay, this->xWindow, &this->xRoot, &this->m_position[0], &this->m_position[1], &this->m_width, &this->m_height, &this->borderWidth, &this->depth);
                 if (a_config.fullscreen)
                 {
-                    this->height = XHeightOfScreen(this->xScreen);
-                    this->width = XWidthOfScreen(this->xScreen);
+                    this->m_height = XHeightOfScreen(this->xScreen);
+                    this->m_width = XWidthOfScreen(this->xScreen);
                 }
 
                 int glContextTypeBit;
@@ -460,7 +465,7 @@ namespace Hangar
                 {
                     mousePositionTemp[1] = XHeightOfScreen(this->xScreen) - mousePositionTemp[1] - 1;
                 }else{
-                    mousePositionTemp[1] = this->height - mousePositionTemp[1] - 1;
+                    mousePositionTemp[1] = this->m_height - mousePositionTemp[1] - 1;
                 }
 
                 if (this->mousePosition != mousePositionTemp)
