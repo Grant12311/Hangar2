@@ -36,11 +36,11 @@ namespace Hangar
         unsigned int m_oldWindowHeight;
 
         std::string m_title;
+        std::array<int, 2> m_position = {0, 0};
         bool m_vsync;
     public:
         bool isOpen;
         unsigned int width, height, borderWidth, depth;
-        std::array<int, 2> position = {0, 0};
         bool fullscreen;
         float fpsLimit;
         double deltaTime = 0.0d;
@@ -113,6 +113,11 @@ namespace Hangar
                 this->m_title = std::to_string(a_title);
                 XStoreName(this->xDisplay, this->xWindow, this->m_title.c_str());
             #endif // __LINUX__
+        }
+
+        std::array<int, 2> getPosition()
+        {
+            return this->m_position;
         }
 
         void setPosition(const unsigned int a_x, const unsigned int a_y)
@@ -218,11 +223,11 @@ namespace Hangar
                                 glCall(glViewport(0, 0, this->width, this->height));
                             }
                         }
-                        if (this->position[0] != xe.xconfigure.x || this->position[1] != xe.xconfigure.y)
+                        if (this->m_position[0] != xe.xconfigure.x || this->m_position[1] != xe.xconfigure.y)
                         {
-                            this->position[0] = xe.xconfigure.x;
-                            this->position[1] = XHeightOfScreen(this->xScreen) - xe.xconfigure.y - this->height;
-                            this->onMoveEvent.call(this->position[0], this->position[1]);
+                            this->m_position[0] = xe.xconfigure.x;
+                            this->m_position[1] = XHeightOfScreen(this->xScreen) - xe.xconfigure.y - this->height;
+                            this->onMoveEvent.call(this->m_position[0], this->m_position[1]);
                         }
                         break;
                     case ClientMessage:
@@ -403,7 +408,7 @@ namespace Hangar
 
                 XMapWindow(this->xDisplay, this->xWindow);
 
-                XGetGeometry(this->xDisplay, this->xWindow, &this->xRoot, &this->position[0], &this->position[1], &this->width, &this->height, &this->borderWidth, &this->depth);
+                XGetGeometry(this->xDisplay, this->xWindow, &this->xRoot, &this->m_position[0], &this->m_position[1], &this->width, &this->height, &this->borderWidth, &this->depth);
                 if (a_config.fullscreen)
                 {
                     this->height = XHeightOfScreen(this->xScreen);
