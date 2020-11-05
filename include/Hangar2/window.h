@@ -105,6 +105,19 @@ namespace Hangar
             XStoreName(this->xDisplay, this->xWindow, this->title.c_str());
         }
 
+        void setVsync(const int a_status)
+        {
+            #ifdef __linux__
+                reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress((const GLubyte *)"glXSwapIntervalSGI"))(a_status);
+                this->vsync = a_status;
+            #endif // __linux__
+        }
+
+        void setFramerateCap(const unsigned int a_cap)
+        {
+            this->m_frametimeCap = 1.0f / a_cap * 1000;
+        }
+
         bool keyIsDown(const int a_key)
         {
             for (int &var : this->keysDown)
@@ -286,6 +299,7 @@ namespace Hangar
                 glXSwapBuffers(this->xDisplay, this->xWindow);
                 if (this->vsync)
                 {
+                    std::cout << "timed" << std::endl;
                     GJGO::wait(this->m_frametimeCap - this->m_frametimeTracker.elapsed());
                 }
                 this->deltaTime = this->m_frametimeTracker.elapsed();
@@ -320,7 +334,7 @@ namespace Hangar
                     GLX_ALPHA_SIZE, 8,
                     GLX_DEPTH_SIZE, 24,
                     GLX_STENCIL_SIZE, 8,
-                    GLX_DOUBLEBUFFER, True,
+                    //GLX_DOUBLEBUFFER, True,
                     None
                 };
 
