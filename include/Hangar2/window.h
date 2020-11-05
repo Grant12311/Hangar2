@@ -95,14 +95,18 @@ namespace Hangar
 
         void setTitle(const std::string &a_title)
         {
-            this->title = a_title;
-            XStoreName(this->xDisplay, this->xWindow, a_title.c_str());
+            #ifdef __linux__
+                this->title = a_title;
+                XStoreName(this->xDisplay, this->xWindow, a_title.c_str());
+            #endif // __linux__
         }
 
         void setTitle(const float a_title)
         {
-            this->title = std::to_string(a_title);
-            XStoreName(this->xDisplay, this->xWindow, this->title.c_str());
+            #ifdef __LINUX__
+                this->title = std::to_string(a_title);
+                XStoreName(this->xDisplay, this->xWindow, this->title.c_str());
+            #endif // __LINUX__
         }
 
         void setVsync(const int a_status)
