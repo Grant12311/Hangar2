@@ -108,7 +108,8 @@ namespace Hangar
         void setVsync(const int a_status)
         {
             #ifdef __linux__
-                reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress((const GLubyte *)"glXSwapIntervalSGI"))(a_status);
+                static PFNGLXSWAPINTERVALSGIPROC glxSwapIntervalSGI = reinterpret_cast<PFNGLXSWAPINTERVALSGIPROC>(glXGetProcAddress(reinterpret_cast<const unsigned char*>("glXSwapIntervalSGI")));
+                glxSwapIntervalSGI(a_status);
                 this->vsync = a_status;
             #endif // __linux__
         }
