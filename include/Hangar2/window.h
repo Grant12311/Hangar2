@@ -134,7 +134,7 @@ namespace Hangar
 
         void setFramerateCap(const unsigned int a_cap)
         {
-            this->m_frametimeCap = 1.0f / a_cap * 1000;
+            this->m_frametimeCap = 1.0f / static_cast<float>(a_cap) * 1000.0f;
         }
 
         bool keyIsDown(const int a_key)
@@ -327,8 +327,8 @@ namespace Hangar
         }
 
         Window(const Config &a_config = Config()) :
-            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, m_title{a_config.title}, isOpen{true}, width{a_config.width}, height{a_config.height}, borderWidth{a_config.borderWidth},
-            depth{a_config.depth}, fullscreen{a_config.fullscreen}, m_vsync{a_config.vsync}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible}, mouseIsEndless{a_config.mouseIsEndless},
+            m_frametimeCap{1.0f / a_config.fpsLimit * 1000}, m_title{a_config.title}, m_vsync{a_config.vsync}, isOpen{true}, width{a_config.width}, height{a_config.height}, borderWidth{a_config.borderWidth},
+            depth{a_config.depth}, fullscreen{a_config.fullscreen}, fpsLimit{a_config.fpsLimit}, mouseVisible{a_config.mouseVisible}, mouseIsEndless{a_config.mouseIsEndless},
             resizeViewportToMatchWindowSize{a_config.resizeViewportToMatchWindowSize}, closeOnEscape{a_config.closeOnEscape}
         {
             #ifdef __linux__
