@@ -192,6 +192,13 @@ namespace Hangar
             #endif // __linux__
         }
 
+        void makeContextCurrent()
+        {
+            #ifdef __linux__
+                glXMakeCurrent(this->xDisplay, this->xWindow, this->xOpenGLContext);
+            #endif // __linux__
+        }
+
         void clear()
         {
             glCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT  | GL_STENCIL_BUFFER_BIT));
@@ -438,7 +445,7 @@ namespace Hangar
                 glXCreateContextAttribsARBProc glXCreateContextAttribsARB = (glXCreateContextAttribsARBProc)glXGetProcAddressARB( (const GLubyte *) "glXCreateContextAttribsARB" );
 
                 this->xOpenGLContext = glXCreateContextAttribsARB(this->xDisplay, xFramebufferConfigs[0], 0, GL_TRUE, contextAttribs);
-                glXMakeCurrent(this->xDisplay, this->xWindow, this->xOpenGLContext);
+                this->makeContextCurrent();
             #endif // __linux__
         }
 
