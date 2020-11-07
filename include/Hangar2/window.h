@@ -337,7 +337,6 @@ namespace Hangar
                 glXSwapBuffers(this->xDisplay, this->xWindow);
                 if (this->m_vsync)
                 {
-                    std::cout << "timed" << std::endl;
                     GJGO::wait(this->m_frametimeCap - this->m_frametimeTracker.elapsed());
                 }
                 this->deltaTime = this->m_frametimeTracker.elapsed();
